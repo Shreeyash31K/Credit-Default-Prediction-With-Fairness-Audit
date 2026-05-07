@@ -17,6 +17,7 @@ data/*.csv
 
 # Logs
 logs/
+!logs/.gitkeep
 
 # OS
 .DS_Store
