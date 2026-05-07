@@ -1,0 +1,23 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Models (large files)
+models/*.joblib
+models/*.pkl
+
+# Data (sensitive)
+data/*.csv
+
+# Logs
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
