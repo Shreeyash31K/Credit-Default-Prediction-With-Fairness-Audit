@@ -71,10 +71,20 @@ def main():
     os.makedirs("models", exist_ok=True)
 
     joblib.dump(preprocessor, "models/preprocessor_v1.joblib")
-    joblib.dump(X_train_balanced, "models/X_train_balanced.joblib")
-    joblib.dump(X_test_t, "models/X_test.joblib")
+
+    # Original train data
+    joblib.dump(X_train, "models/X_train_original.joblib")
+    joblib.dump(y_train, "models/y_train_original.joblib")
+    
+    # Balanced train data
     joblib.dump(y_train_balanced, "models/y_train_balanced.joblib")
+    joblib.dump(X_train_balanced, "models/X_train_balanced.joblib")
+    
+    # Test data
+    joblib.dump(X_test_t, "models/X_test.joblib")
     joblib.dump(y_test, "models/y_test.joblib")
+    
+    # Protected groups 
     joblib.dump(protected_train, "models/protected_train.joblib")
     joblib.dump(protected_test, "models/protected_test.joblib")
 

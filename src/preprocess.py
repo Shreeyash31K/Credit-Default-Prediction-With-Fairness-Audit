@@ -150,7 +150,6 @@ def engineer_features(df: pd.DataFrame) -> pd.DataFrame:
 # 5. BUILD PREPROCESSING PIPELINE
 # ──────────────────────────────────────────────────
 
-def build_preprocessor() -> Pipeline:
     """
     Build a sklearn Pipeline that handles:
     - Ordinal encoding for categorical columns
@@ -161,34 +160,60 @@ def build_preprocessor() -> Pipeline:
     - OneHot creates 50+ columns → slower + overfitting risk
     - For LR we will use OneHot instead (see train.py)
     """
-    from sklearn.compose import ColumnTransformer
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
+def build_preprocessor():
+    categorical_features = [
 
-    # Columns to use in model (exclude protected attrs from direct input)
-    # We keep them for fairness audit but optionally remove from features
-    feature_cats = CATEGORICAL_COLS
-    feature_nums = NUMERICAL_COLS + ["debt_burden", "monthly_credit_amount"]
+      "status",
+      "credit_history",
+      "purpose",
+      "savings",
+      "employment_duration",
+      "personal_status_sex",
+      "other_debtors",
+      "property",
+      "other_installment_plans",
+      "housing",
+      "job",
+      "telephone",
+      "foreign_worker"
+   ]
+    numeric_features = [
+
+      "duration",
+      "amount",
+      "installment_rate",
+      "present_residence",
+      "age",
+      "number_credits",
+      "people_liable",
+      "debt_burden",
+      "monthly_credit_amount"
+    ]
+    numeric_transformer = Pipeline(
+        steps=[
+                ("imputer", SimpleImputer(strategy="median")),
+                ("scaler", StandardScaler())
+        ]
+    )
+    categorical_transformer = Pipeline(
+        steps=[
+            ("imputer", SimpleImputer(strategy="most_frequent")),
+            ("onehot", OneHotEncoder(handle_unknown="ignore"))
+        ]
+    )
 
     preprocessor = ColumnTransformer(
         transformers=[
-            (
-                "cat",
-                OrdinalEncoder(
-                    handle_unknown="use_encoded_value",
-                    unknown_value=-1
-                ),
-                feature_cats,
-            ),
-            (
-                "num",
-                StandardScaler(),
-                feature_nums,
-            ),
-        ],
-        remainder="drop",   # drop age_group (string), kept for fairness only
+            ("num", numeric_transformer, numeric_features),
+            ("cat", categorical_transformer, categorical_features)
+        ]
     )
 
     return preprocessor
-
 
 # ──────────────────────────────────────────────────
 # 6. TRAIN-TEST SPLIT
